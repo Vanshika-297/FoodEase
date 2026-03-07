@@ -5,6 +5,9 @@ import { IoMdArrowBack } from "react-icons/io";
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios';
 import { serverUrl } from '../App';
+import {setError} from 'react'
+import {  } from 'react-spinners';
+
 
 function ForgotPassword() {
     const[step,setStep] = useState(1)
@@ -12,27 +15,37 @@ function ForgotPassword() {
 const [otp,setOtp]=useState("") 
 const [newPassword,setNewPassword]=useState("")
 const [confirmPassword,setConfirmPassword]=useState("") 
+const [error,setError]=useState("")
+const [loading,setLoading]=useState(false)
 
     const navigate=useNavigate()
 
     const handleSendOtp=async()=>{
+      setLoading(true)
         try {
            const result=await axios.post(`${serverUrl}/api/auth/send-otp`,{email},
             {withCredentials:true})
             console.log(result)
+            setError("")
             setStep(2)
+            setLoading
         } catch (error) {
-            console.log("send otp error",error)
+            setError(error.response?.data?.message)
+            setLoading(false)
         }
     }
     const handleVerifyOtp=async()=>{
+      setLoading(true)
         try {
            const result=await axios.post(`${serverUrl}/api/auth/verify-otp`,{email,otp},
             {withCredentials:true})
             console.log(result)
+            setError("")
             setStep(3)
+            setLoading(false)
         } catch (error) {
-            console.log("verify otp error",error)
+            setError(error.response?.data?.message)
+              setLoading(false)
         }
 
     }
@@ -40,13 +53,17 @@ const [confirmPassword,setConfirmPassword]=useState("")
       if(newPassword!==confirmPassword){
         return alert("Password and confirm password must be same")
       }
+      setLoading(true)
         try {
            const result=await axios.post(`${serverUrl}/api/auth/reset-password`,{email,newPassword},
             {withCredentials:true})
+            setError("")
             console.log(result)
+            setLoading(false)
             navigate("/signin")
         } catch (error) {
-            console.log("reset password error",error)
+            setError(error.response?.data?.message)
+              setLoading(false)
         }
     }
 
@@ -78,9 +95,11 @@ const [confirmPassword,setConfirmPassword]=useState("")
         </div>
       <button className={`w-full font-semibold mt-4 flex items-center justify-center gap-2 border rounded-lg px-4 py-2 transition duration-200 
       bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer`}
-     onClick={handleSendOtp} >
-        Send Otp
-        </button>                    
+     onClick={handleSendOtp} disabled={loading}>
+      {loading?<ClipLoader size={20} color="#fff"/>:"Send OTP"}
+        </button>  
+        {error && <p className="text-red-500 text-center my-[10px]">*{error}</p> }
+                  
                     </div>}
 {step==2 && 
                 <div>        
@@ -102,9 +121,10 @@ const [confirmPassword,setConfirmPassword]=useState("")
         </div>
       <button className={`w-full font-semibold mt-4 flex items-center justify-center gap-2 border rounded-lg px-4 py-2 transition duration-200 
       bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer`}
-       onClick={handleVerifyOtp} >
-        Verify OTP
-        </button>                    
+       onClick={handleVerifyOtp} disabled={loading}>
+        {loading?<ClipLoader size={20} color="#fff"/>:"Verify OTP"}
+        </button> 
+        {error && <p className="text-red-500 text-center my-[10px]">*{error}</p>}                
                     </div>}
 {step==3 && 
                 <div>        
@@ -142,9 +162,10 @@ const [confirmPassword,setConfirmPassword]=useState("")
         </div>
       <button className={`w-full font-semibold mt-4 flex items-center justify-center gap-2 border rounded-lg px-4 py-2 transition duration-200 
       bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer`}
-        onClick={handleResetPassword} >
-        Reset Password
-        </button>                    
+        onClick={handleResetPassword} disabled={loading}>
+        {loading?<ClipLoader size={20} color="#fff"/>:"Reset Password"}
+        </button> 
+        {error && <p className="text-red-500 text-center my-[10px]">*{error}</p>}  
                     </div>}
                     
          </div>
