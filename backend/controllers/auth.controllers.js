@@ -29,7 +29,7 @@ export const signUp=async (req,res)=>{
          const token=await genToken(user._id)
          res.cookie("token",token,{
             secure:false,
-            sameSite:"strict",
+            sameSite:"lax",
             maxAge:7*24*60*60*1000,
             httpOnly:true
          })
@@ -56,7 +56,7 @@ export const signIn=async (req,res)=>{
          const token=await genToken(user._id)
          res.cookie("token",token,{
             secure:false,
-            sameSite:"strict",
+            sameSite:"lax",
             maxAge:7*24*60*60*1000,
             httpOnly:true
          })
@@ -66,10 +66,10 @@ export const signIn=async (req,res)=>{
     }
 }
 
-export const signOut=async ()=>{
+export const signOut=async (req,res)=>{
     try {
         res.clearCookie("token")
-        return re.status(200).json({message:"log out successfully"})
+        return res.status(200).json({message:"log out successfully"})
     } catch (error) {
             return res.status(500).json(`sign out error ${error}`)
     }
@@ -134,20 +134,18 @@ export const resetPassword=async (req,res)=>{
 
 export const googleAuth=async (req,res)=>{
     try {
-        const {email,fullName,mobile,role}=req.body
+        const {email,fullName}=req.body
         let user=await User.findOne({email})
         if(!user){
             user=await User.create({
                 fullName,
-                email,
-                mobile,
-                role,       
+                email,     
             })
         }
       const token=await genToken(user._id)                
       res.cookie("token",token,{
             secure:false,
-            sameSite:"strict",
+            sameSite:"lax",
             maxAge:7*24*60*60*1000,
             httpOnly:true
          })

@@ -8,6 +8,9 @@ import { serverUrl } from "../App";
 import { auth } from "../../firebase";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { ClipLoader } from "react-spinners"
+import { useDispatch } from "react-redux";
+import { setUserData } from "../redux/userSlice";
+
 
 function SignUp() {
   const primaryColor = "#ff4d2d";
@@ -23,14 +26,15 @@ const [password,setPassword]=useState("")
 const [mobile,setMobile]=useState("")
 const [error,setError]=useState("")
 const [loading,setLoading]=useState(false)
+const dispatch=useDispatch()
 
 const handleSignUp=async ()=>{
   setLoading(true)
     try {
         const result=await axios.post(`${serverUrl}/api/auth/signup`,
             { fullName,email,password,mobile,role},{withCredentials:true})
-        console.log(result);
-        setError("")
+           dispatch(setUserData(result.data))
+            setError("")
         setLoading(false)
     } catch (error) {
      setError(error.response?.data?.message)   
@@ -51,7 +55,7 @@ try {
     role,
     mobile,
   },{withCredentials:true})
-  console.log(data);
+  dispatch(setUserData(data))
 }catch (error) {
   console.log('Google Auth Error',error.response?.data?.message || "Google authentication failed");
 }

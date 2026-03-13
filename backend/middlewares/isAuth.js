@@ -12,8 +12,9 @@ const isAuth=async (req,res,next)=>{
         if(!decodedToken){
             return res.status(401).json({message:"token not verified"})
         }
-        console.log(decodedToken);
-        req.userId=decodedToken.id
+        // console.log(decodedToken);
+        req.userId=decodedToken.userId
+        // console.log("UserId from middleware:", req.userId)
           next()
     } catch (error) {
         return res.status(401).json({message:"isAuth error"})

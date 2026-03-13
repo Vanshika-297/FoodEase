@@ -5,9 +5,11 @@ import { FaRegEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import { serverUrl } from "../App";
-import { auth } from "../../firebase";
+import { auth } from "../../firebase.js";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { } from "react-spinners"
+import { ClipLoader } from "react-spinners"
+import { useDispatch } from "react-redux";
+import { setUserData } from "../redux/userSlice";
 
 function SignIn() {
   const primaryColor = "#ff4d2d";
@@ -20,13 +22,14 @@ const [email,setEmail]=useState("")
 const [password,setPassword]=useState("")
 const [error,setError]=useState("")
 const [loading,setLoading]=useState(false)
+const dispatch=useDispatch()
 
 const handleSignIn=async ()=>{
     setLoading(true)  
     try {
         const result=await axios.post(`${serverUrl}/api/auth/signin`,
             {email,password},{withCredentials:true})
-        console.log(result);
+          dispatch(setUserData(result.data))
         setError("")
          setLoading(false)
     } catch (error) {
@@ -41,10 +44,12 @@ const handleGoogleAuth=async ()=>{
 try {
   const {data}=await axios.post(`${serverUrl}/api/auth/google-auth`,{
     email:result.user.email,
+    fullName:result.user.displayName,
   },{withCredentials:true})
-  console.log(data);
+      dispatch(setUserData(data))
 }catch (error) {
-  console.log('Google Auth Error',error.response?.data?.message || "Google authentication failed");
+  console.log('Google Auth Error',error);
+  setError(error.response?.data?.message || "Google authentication failed")
 }
 }
 
@@ -125,7 +130,9 @@ try {
       {loading?<ClipLoader size={20} color="#fff"/>:"Sign In"}
         </button>
         {error && <p className="text-red-500 text-center my-[10px]">*{error}</p>}
-      <button className="w-full mt-4 flex items-center justify-center
+      <button 
+      type="button"
+      className="w-full mt-4 flex items-center justify-center
       gap-2 border rounded-lg py-2 cursor-pointer transition duration-200 border-gray-400 hover:bg-gray-400"
       onClick={handleGoogleAuth}>
      <FcGoogle size={20}/>
