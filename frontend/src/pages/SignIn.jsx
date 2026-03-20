@@ -44,7 +44,6 @@ const handleGoogleAuth=async ()=>{
 try {
   const {data}=await axios.post(`${serverUrl}/api/auth/google-auth`,{
     email:result.user.email,
-    fullName:result.user.displayName,
   },{withCredentials:true})
       dispatch(setUserData(data))
 }catch (error) {

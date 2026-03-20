@@ -134,12 +134,12 @@ export const resetPassword=async (req,res)=>{
 
 export const googleAuth=async (req,res)=>{
     try {
-        const {email,fullName}=req.body
+        const {email,fullName,mobile,role}=req.body
         let user=await User.findOne({email})
         if(!user){
             user=await User.create({
                 fullName,
-                email,     
+                email,mobile,role,      
             })
         }
       const token=await genToken(user._id)                
@@ -151,6 +151,6 @@ export const googleAuth=async (req,res)=>{
          })
          return res.status(200).json(user)  
     } catch (error) {
-        return res.status(500).json(`Google auth error ${error}`)
+        return res.status(500).json(`Google auth error ${error}` )
     }
 }

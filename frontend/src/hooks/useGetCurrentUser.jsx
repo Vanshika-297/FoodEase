@@ -18,7 +18,7 @@ function useGetCurrentUser() {
          
       }catch (error) {
         // Silently ignore 401 - user not logged in yet. This error is expected on first load
-        if(error.response?.status !== 401) {
+        if(error.response?.status !== 401 &&     error.response?.status !== 404) {
           console.log("Get Current User Error", error);
         }
         // console.log("Full Error:", error)
