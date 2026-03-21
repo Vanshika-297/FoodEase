@@ -1,11 +1,12 @@
 import axios from 'axios'
 import { useEffect } from 'react'  
 import { serverUrl } from '../App'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setMyShopData } from '../redux/ownerSlice'
 
 function useGetMyShop() {
   const dispatch=useDispatch()
+  const {userData}=useSelector(state=>state.user)
   useEffect(() => {
     // This is where you would typically make an API call to fetch the current user's data
     const fetchShop=async ()=>{
@@ -24,7 +25,7 @@ function useGetMyShop() {
     }
     }
     fetchShop()
-  }, [])
+  }, [userData])
 }
 
 export default useGetMyShop
