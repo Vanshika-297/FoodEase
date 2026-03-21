@@ -58,7 +58,7 @@ try {
       style={{ backgroundColor: bgColor }}
     >
       <div
-        class={`bg-white rounded-xl shadow-lg w-full max-w-md p-8 border-[1px]
+        className={`bg-white rounded-xl shadow-lg w-full max-w-md p-8 border-[1px]
      `}
         style={{
           border: `1px solid ${borderColor}`,
