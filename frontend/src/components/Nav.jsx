@@ -116,7 +116,7 @@ function Nav() {
 }
 
   <div className="hidden md:flex items-center gap-2 cursor-pointer relative px-3 py-1
-  rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] font-medium">
+  rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] font-medium" onClick={()=>navigate("/my-orders")}>
 <TbReceipt2 size={20} />
 <span>My Orders</span>
 <span className="absolute -right-2 -top-2 text-xs font-bold text-white 
@@ -124,7 +124,7 @@ bg-[#ff4d2d] rounded-full px-[6px] py-[1px]">0</span>
   </div>
 
     <div className="md:hidden flex items-center gap-2 cursor-pointer relative px-3 py-1
-  rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] font-medium">
+  rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] font-medium" onClick={()=>navigate("/my-orders")}>
 <TbReceipt2 size={20} />
 <span className="absolute -right-2 -top-2 text-xs font-bold text-white 
 bg-[#ff4d2d] rounded-full px-[6px] py-[1px]">0</span>
@@ -141,7 +141,7 @@ bg-[#ff4d2d] rounded-full px-[6px] py-[1px]">0</span>
         
         <button
           className="hidden md:block px-3 py-1 rounded-lg bg-[#ff4d2d]/10 
-      text-[#ff4d2d] text-sm font-medium"
+      text-[#ff4d2d] text-sm font-medium" onClick={()=>navigate("/my-orders")}
         >
           My Orders
         </button>
@@ -166,7 +166,7 @@ bg-[#ff4d2d] rounded-full px-[6px] py-[1px]">0</span>
           >
             <div className="text-[17px] font-semibold">{userData.fullName}</div>
             {userData.role=="user" &&   
-                <div className="md:hidden text-[#ff2d4d] font-semibold cursor-pointer">
+                <div className="md:hidden text-[#ff2d4d] font-semibold cursor-pointer"onClick={()=>navigate("/my-orders")}>
               My Orders
             </div>
 }
