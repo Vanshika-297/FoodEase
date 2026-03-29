@@ -15,10 +15,15 @@ function useGetMyOrders() {
         try {
         const result=await axios.get(`${serverUrl}/api/order/my-orders`,{withCredentials:true})
         dispatch(setMyOrders(result.data))
-        console.log(result.data)
+        // console.log(result.data)
          
       }catch (error) {
-        console.log(error)
+        // Silently ignore 401 - owner not logged in yet. This error is expected on first load
+        if(error.response?.status !== 401 &&     error.response?.status !== 404) {
+          console.log("Get My Order Error", error);
+        }
+        // console.log("Full Error:", error)
+        // console.log("Error Response:", error.response)
     }
     }
     fetchOrders()

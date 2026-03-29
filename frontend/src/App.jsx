@@ -19,15 +19,17 @@ import CheckOut from './pages/CheckOut'
 import MyOrders from './pages/MyOrders'
 import OrderPlaced from './pages/OrderPlaced'
 import useGetMyOrders from './hooks/useGetMyOrders'
+import useUpdateLocation from './hooks/useUpdateLocation'
 
 function App() {
+    const {userData}=useSelector((state)=>state.user)
   useGetCurrentUser()
+  useUpdateLocation()
   useGetCity()
   useGetMyShop()
   useGetShopByCity()
   useGetItemsByCity()
   useGetMyOrders()
-  const {userData}=useSelector((state)=>state.user)
   return (
   <Routes>
     <Route path='/signup' element={!userData?<SignUp/>:<Navigate to={"/"}/>}/>
