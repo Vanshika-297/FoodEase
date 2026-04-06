@@ -295,3 +295,31 @@ export const acceptOrder=async(req,res)=>{
         return res.status(500).json({message:`Get current order error ${error}`})
     }
 }
+
+export const getOrderById=async(req,res)=>{
+    try {
+        const {orderId}=req.params
+        const order=await Order.findById(orderId)
+        .populate("user")
+        .populate({
+            path:"shopOrders.shop",
+            model:"Shop",
+        })
+        .populate({
+            path:"shopOrders.assignedDeliveryBoy",
+            model:"User",
+        })
+        .populate({
+            path:"shopOrders.shopOrderItems.item",
+            model:"Item",
+        })
+        .lean()
+
+        if(!order){
+            return res.status(400).json({message:"Order not found"})
+        }
+        return res.status(200).json(order)
+    } catch (error) {
+        return res.status(500).json({message:`Get order by id error ${error}`})
+    }
+}
