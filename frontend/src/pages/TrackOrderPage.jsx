@@ -39,7 +39,7 @@ function TrackOrderPage() {
                     <p><span className='font-semibold'>Subtotal:</span> {shopOrder.subtotal}</p>
                     <p className='mt-6'><span className='font-semibold'>Delivery address:</span> {currentOrder?.deliveryAddress?.text}</p>
                 </div>
-                {shopOrder.status!="delivered"?<>
+                {shopOrder.status?.toLowerCase() !== "delivered"?<>
                 {shopOrder.assignedDeliveryBoy ? 
                 <div className='text-sm text-gray-700'>
                     <p className='font-semibold'><span>Delivery Boy Name:</span>{shopOrder.assignedDeliveryBoy.fullName}</p>
@@ -49,7 +49,7 @@ function TrackOrderPage() {
                 </>:<p className='text-green-500 font-semibold text-lg'>Delivered</p>}
 
 
-                {shopOrder.assignedDeliveryBoy && 
+                {(shopOrder.assignedDeliveryBoy && shopOrder.status?.toLowerCase() !== "delivered") &&
                 <div className='h-[400px] w-full rounded-2xl overflow-hidden shadow-md'>
                     <DeliverBoyTracking data={
                     {

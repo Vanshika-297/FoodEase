@@ -6,6 +6,7 @@ import { FaChevronCircleLeft } from "react-icons/fa";
 import { FaChevronCircleRight } from "react-icons/fa";
 import { useSelector } from 'react-redux';
 import FoodCard from './FoodCard';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -13,10 +14,26 @@ function UserDashboard() {
   const {currentCity,shopsInMyCity,itemsInMyCity}=useSelector(state=>state.user)
   const cateScrollRef=useRef()
   const shopScrollRef=useRef()
+  const navigate=useNavigate()
   const [showLeftCateButton,setShowLeftCateButton]=useState(false)
   const [showRightCateButton,setShowRightCateButton]=useState(false)
   const [showLeftShopButton,setShowLeftShopButton]=useState(false)
   const [showRightShopButton,setShowRightShopButton]=useState(false)
+const [updatedItemsList,setUpdatedItemsList]=useState([])
+
+const handleFilterByCategory=(category)=>{
+  if(category=="All"){
+    setUpdatedItemsList(itemsInMyCity)
+  }
+  else{
+    const filteredList=itemsInMyCity?.filter(item=>item.category.toLowerCase()===category.toLowerCase())
+    setUpdatedItemsList(filteredList)
+  }
+}
+
+useEffect(()=>{
+  setUpdatedItemsList(itemsInMyCity)
+},[itemsInMyCity])
 
   const updateButton=(ref,setLeftButton,setRightButton)=>{
     const element=ref.current
@@ -71,7 +88,8 @@ function UserDashboard() {
 
         <div className='w-full flex overflow-x-auto gap-4 pb-2 ' ref={cateScrollRef}>
         {categories.map((cate,index)=>(
-          <CategoryCard  name={cate.category} image={cate.image} key={index}/>
+          <CategoryCard  name={cate.category} image={cate.image} key={index}
+          onClick={()=>handleFilterByCategory(cate.category)}/>
         ))}
         </div>
 
@@ -99,7 +117,7 @@ function UserDashboard() {
 
         <div className='w-full flex overflow-x-auto gap-4 pb-2 ' ref={shopScrollRef}>
         {shopsInMyCity?.map((shop,index)=>(
-          <CategoryCard  name={shop.name} image={shop.image} key={index}/>
+          <CategoryCard  name={shop.name} image={shop.image} key={index} onClick={()=>navigate(`/shop/${shop._id}`)}/>
         ))}
         </div>
 
@@ -117,7 +135,7 @@ function UserDashboard() {
       Suggested Food items
      </h1>
      <div className='w-full h-auto flex flex-wrap gap-[20px] justify-center'>
-      {itemsInMyCity?.map((item,index)=>(
+      {updatedItemsList?.map((item,index)=>(
         <FoodCard key={index} data={item}/>
       ))}
      </div>

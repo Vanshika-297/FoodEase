@@ -2,6 +2,7 @@ import DeliveryAssignment from "../models/deliveryAssignment.model.js"
 import Order from "../models/order.model.js"
 import Shop from "../models/shop.model.js"
 import User from "../models/user.model.js"
+import { sendDeliveryOtpMail } from "../utils/mail.js"
 
 export const placeOrder=async (req,res)=>{
     try {
@@ -321,5 +322,49 @@ export const getOrderById=async(req,res)=>{
         return res.status(200).json(order)
     } catch (error) {
         return res.status(500).json({message:`Get order by id error ${error}`})
+    }
+}
+
+export const sendDeliveryOtp=async(req,res)=>{
+    try {
+        const {orderId,shopOrderId}=req.body
+        const order=await Order.findById(orderId).populate("user")
+        const shopOrder=order.shopOrders.id(shopOrderId)
+        if(!order || !shopOrder){
+            return res.status(400).json({message:"Order or shop order not found"})
+        }   
+        const otp=Math.floor(1000+Math.random()*9000).toString()
+        shopOrder.deliveryOtp=otp
+        shopOrder.otpExpires=Date.now()+5*60*1000
+        await order.save()
+        await sendDeliveryOtpMail(order.user,otp)
+        return res.status(200).json({message:`Delivery OTP sent to ${order?.user?.email}`})
+    } catch (error) {
+        return res.status(500).json({message:`Send delivery OTP error ${error}`})
+    }
+}
+
+export const verifyDeliveryOtp=async(req,res)=>{
+    try {
+        const {orderId,shopOrderId,otp}=req.body
+        const order=await Order.findById(orderId)
+        const shopOrder=order.shopOrders.id(shopOrderId)
+        if(!order || !shopOrder){
+            return res.status(400).json({message:"Order or shop order not found"})
+        }
+        if(shopOrder.deliveryOtp!==otp || !shopOrder.otpExpires || shopOrder.otpExpires<Date.now()){
+            return res.status(400).json({message:"Invalid OTP"})
+        }
+        shopOrder.status="delivered"
+        shopOrder.deliveredAt=new Date()
+        await order.save()
+        await DeliveryAssignment.deleteOne({
+            shopOrderId:shopOrder._id,
+            order:orderId,
+            assignedTo:shopOrder.assignedDeliveryBoy
+        })
+        return res.status(200).json({message:"OTP verified, order Delivered Successfully"})
+    } catch (error) {
+        return res.status(500).json({message:`Verify delivery OTP error ${error}`})
     }
 }
