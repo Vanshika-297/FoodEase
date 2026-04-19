@@ -21,9 +21,11 @@ function UserOrderCard({ data }) {
           </p>
         </div>
         <div className="text-right">
+          {data.paymentMethod=="cod"?
           <p className="text-sm text-gray-500">
             {data.paymentMethod?.toUpperCase()}
-          </p>
+          </p>:<p className="text-sm text-gray-500 font-semibold">Payment: {data.payment?"true":"false"}</p>}
+
           <p className="font-medium text-blue-600">
             {data.shopOrders?.[0].status}
           </p>

@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+
 const userSlice = createSlice({
   name: "user",
   initialState: {
@@ -10,7 +11,8 @@ const userSlice = createSlice({
     itemsInMyCity: null,
     cartItems: [],
     totalAmount:0,
-    myOrders:[]
+    myOrders:[],
+    searchItems:null
   },
   reducers: {
     setUserData: (state, action) => {
@@ -67,6 +69,9 @@ const userSlice = createSlice({
           order.shopOrders.status=status
         }
       }
+    },
+    setSearchItems:(state,action)=>{
+      state.searchItems=action.payload
     }
   },
 });
@@ -84,6 +89,7 @@ export const {
   removeCartItem,
   setMyOrders,
   addMyOrder,
-  updateOrderStatus
+  updateOrderStatus,
+  setSearchItems
 } = userSlice.actions;
 export default userSlice.reducer;

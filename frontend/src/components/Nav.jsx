@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaLocationDot } from "react-icons/fa6";
 import { IoMdSearch } from "react-icons/io";
 import { FiShoppingCart } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import { RxCross1 } from "react-icons/rx";
 import { useDispatch } from "react-redux";
-import { setUserData } from "../redux/userSlice";
+import { setSearchItems, setUserData } from "../redux/userSlice";
 import axios from "axios";
 import { serverUrl } from "../App";
 import { FaPlus } from "react-icons/fa";
@@ -15,12 +15,13 @@ import { useNavigate } from "react-router-dom";
 
 
 function Nav() {
-  const { userData, currentCity,cartItems } = useSelector((state) => state.user);
+  const { userData, currentCity,cartItems,myOrders } = useSelector((state) => state.user);
   const { myShopData } = useSelector((state) => state.owner);
   const [showInfo, setShowInfo] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const dispatch = useDispatch();
   const navigate=useNavigate()
+  const [query,setQuery]=useState("")
   const handleLogout = async () => {
     try {
       const result = await axios.get(`${serverUrl}/api/auth/signout`, {
@@ -31,6 +32,26 @@ function Nav() {
       console.log(error);
     }
   };
+
+  const handleSearchItems=async()=>{
+    try {
+      const result=await axios.get(`${serverUrl}/api/item/search-items?query=${query}&city=${currentCity}`,{
+        withCredentials:true
+      })
+      dispatch(setSearchItems(result.data))
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  
+  useEffect(()=>{
+    if(query){
+      handleSearchItems()
+    }
+    else{
+      dispatch(setSearchItems(null))
+    }
+  },[query])
   return (
     <div
       className="w-full h-[80px] flex items-center justify-between
@@ -55,6 +76,7 @@ function Nav() {
               type="text"
               placeholder="search delicious food..."
               className="px-[10px] text-gray-700 outline-0 w-full"
+              onChange={(e)=>setQuery(e.target.value)} value={query}
             />
           </div>
         </div>
@@ -80,6 +102,7 @@ function Nav() {
               type="text"
               placeholder="search delicious food..."
               className="px-[10px] text-gray-700 outline-0 w-full"
+              onChange={(e)=>setQuery(e.target.value)} value={query}
             />
           </div>
         </div>
@@ -120,7 +143,7 @@ function Nav() {
 <TbReceipt2 size={20} />
 <span>My Orders</span>
 <span className="absolute -right-2 -top-2 text-xs font-bold text-white 
-bg-[#ff4d2d] rounded-full px-[6px] py-[1px]">0</span>
+bg-[#ff4d2d] rounded-full px-[6px] py-[1px]">{myOrders.length}</span>
   </div>
 
     <div className="md:hidden flex items-center gap-2 cursor-pointer relative px-3 py-1
