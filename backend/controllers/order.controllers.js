@@ -86,7 +86,27 @@ export const placeOrder=async (req,res)=>{
         })
 
       await  newOrder.populate("shopOrders.shopOrderItems.item","name image price" )
-      await newOrder.populate("shopOrders.shop","name")
+      await newOrder.populate("shopOrders.shop","name " )
+      await newOrder.populate("shopOrders.owner","name socketId" )
+      await newOrder.populate("user","name email mobile" )
+
+        const io=req.app.get("io")
+        if(io){
+            newOrder.shopOrders.forEach(so=>{
+                const ownerSocketId=so.owner?.socketId
+                if(ownerSocketId){
+                    io.to(ownerSocketId).emit("newOrder",{
+                        _id:newOrder._id,
+                        paymentMethod:newOrder.paymentMethod,
+                        user:newOrder.user,
+                        shopOrders:so,
+                        createdAt:newOrder.createdAt,
+                        deliveryAddress:newOrder.deliveryAddress,
+                        payment:newOrder.payment
+                    })
+                }
+            })
+        }
 
         return res.status(201).json(newOrder)
 
