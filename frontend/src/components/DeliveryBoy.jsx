@@ -8,7 +8,7 @@ import { useState } from 'react'
 import DeliverBoyTracking from './DeliverBoyTracking'
 
 function DeliveryBoy() {
-  const {userData}=useSelector(state=>state.user)
+  const {userData,socket}=useSelector(state=>state.user)
   const [currentOrder,setCurrentOrder]=useState(null)
   const [availableAssignments,setAvailableAssignments]=useState([])
 const [showOtpBox,setShowOtpBox]=useState(false)
@@ -63,6 +63,17 @@ const verifyOtp=async()=>{
     console.error("Error verifying delivery OTP:", error)
   } 
 }
+
+useEffect(()=>{
+  socket?.on('newAssignment',(data)=>{
+    if(data.sentTo==userData._id){
+    setAvailableAssignments([...availableAssignments,data])
+    }
+  })
+  return ()=>{
+    socket?.off('newAssignment')
+  }
+},[socket])
 
   useEffect(()=>{
     getAssignments()

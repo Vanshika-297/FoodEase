@@ -24,7 +24,7 @@ import TrackOrderPage from './pages/TrackOrderPage'
 import Shop from './pages/Shop'
 import { useEffect } from 'react'
 import { io } from 'socket.io-client'
-// import { setSocket } from './redux/userSlice'
+import { setSocket } from './redux/userSlice'
 
 function App() {
     const {userData}=useSelector((state)=>state.user)
@@ -43,12 +43,12 @@ function App() {
       withCredentials:true,}
     )
   
-    // dispatch(setSocket(socketInstance))
+    dispatch(setSocket(socketInstance))
     socketInstance.on("connect",()=>{
       // console.log("Connected to socket server with ID:",socketInstance.id)
       
     socketInstance.emit("identity",{userId:userData._id})
-    console.log("Sending identity event with user ID:", userData._id); // ✅
+    // console.log("Sending identity event with user ID:", userData._id); // ✅
     
 })
 return()=>{

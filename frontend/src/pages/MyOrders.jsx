@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import UserOrderCard from "../components/UserOrderCard";
 import OwnerOrderCard from "../components/OwnerOrderCard";
 import { setMyOrders } from "../redux/userSlice";
+import { updateRealtimeOrderStatus } from "../redux/userSlice";
 
 function MyOrders() {
   const { userData, myOrders,socket } = useSelector((state) => state.user);
@@ -12,13 +13,20 @@ function MyOrders() {
   const dispatch=useDispatch()
 
   useEffect(() => {
-    socket.on('newOrder', (data) => {
+    socket?.on('newOrder', (data) => {
       if(data.shopOrders?.owner._id==userData._id){
         dispatch(setMyOrders([data,...myOrders]))
       }
     })
+
+    socket?.on('update-status', ({orderId,shopId,status,userId}) => {
+      if(userId==userData._id){
+        dispatch(updateRealtimeOrderStatus({orderId,shopId,status}))
+      }
+    });
     return () => {
       socket?.off('newOrder');
+      socket?.off('update-status');
     };
   }, [socket]);
 
