@@ -28,7 +28,7 @@ const [loading,setLoading]=useState(false)
             console.log(result)
             setError("")
             setStep(2)
-            setLoading
+            setLoading(false)
         } catch (error) {
             setError(error.response?.data?.message)
             setLoading(false)
