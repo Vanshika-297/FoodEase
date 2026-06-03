@@ -217,8 +217,14 @@ export const updateOrderStatus=async(req,res)=>{
             return res.status(400).json({message:"shop order not found"})
         }
         shopOrder.status=status
+
+        
         let deliveryBoysPayload=[]
         if(status=="out of delivery" && !shopOrder.assignment){
+//             console.log("Status:", status)
+// console.log("Assignment Exists:", !!shopOrder.assignment)
+// console.log("Assignment Value:", shopOrder.assignment)
+
             const {longitude,latitude}=order.deliveryAddress
             const nearbyDeliveryBoys=await User.find({
                 role:"deliveryBoy",
@@ -256,6 +262,8 @@ export const updateOrderStatus=async(req,res)=>{
                 broadcastedTo:candidates,
                 status:"broadcasted"
             })
+            console.log("Created Assignment:", deliveryAssignment)
+            console.log("Candidates:", candidates)
             shopOrder.assignedDeliveryBoy=deliveryAssignment.assignedTo
 
             shopOrder.assignment=deliveryAssignment._id
@@ -273,6 +281,9 @@ export const updateOrderStatus=async(req,res)=>{
             const io=req.app.get("io")
             if(io){
                 availableBoys.forEach(boy=>{
+    //                     console.log("Boy:", boy.fullName)
+    // console.log("Socket:", boy.socketId)
+
                     const boySocketId=boy.socketId
                     if(boySocketId){
                         io.to(boySocketId).emit("newAssignment",{
@@ -287,8 +298,8 @@ export const updateOrderStatus=async(req,res)=>{
                     }
                 })
             }
+        }
 
-            await shopOrder.save()
         await order.save()
         const updatedShopOrder=order.shopOrders.find(o=>o.shop.toString()==shopId)
         await order.populate("shopOrders.shop","name")
@@ -307,7 +318,7 @@ export const updateOrderStatus=async(req,res)=>{
                                 })
             }
         }
-    }
+    
         return res.status(200).json({
             shopOrder:updatedShopOrder,
             assignedDeliveryBoy:updatedShopOrder?.assignedDeliveryBoy,
@@ -322,6 +333,7 @@ export const updateOrderStatus=async(req,res)=>{
 export const getDeliveryBoyAssignment=async(req,res)=>{
     try {
         const deliveryBoyId=req.userId
+        // console.log("Delivery Boy ID:", deliveryBoyId)
         const assignments=await DeliveryAssignment.find({
             broadcastedTo:deliveryBoyId,
             status:"broadcasted"
@@ -329,6 +341,7 @@ export const getDeliveryBoyAssignment=async(req,res)=>{
         .populate("order")
         .populate("shop")
 
+        // console.log("Assignments:", assignments)
         const formated = assignments.map(a => {
     const shopOrder = a.order?.shopOrders?.find(
         so => so._id.toString() === a.shopOrderId.toString()

@@ -17,6 +17,7 @@ const [otp,setOtp]=useState("")
     try {
       const result=await axios.get(`${serverUrl}/api/order/get-assignments`,
       {withCredentials:true})
+          console.log("Assignments API:", result.data)
       setAvailableAssignments(result.data)
     } catch (error) {
       console.error("Error fetching assignments:", error)
@@ -66,6 +67,7 @@ const verifyOtp=async()=>{
 
 useEffect(()=>{
   socket?.on('newAssignment',(data)=>{
+    // console.log("NEW ASSIGNMENT RECEIVED", data)
     if(data.sentTo==userData._id){
     setAvailableAssignments([...availableAssignments,data])
     }
