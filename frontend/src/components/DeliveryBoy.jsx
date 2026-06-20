@@ -65,17 +65,17 @@ const verifyOtp=async()=>{
   } 
 }
 
-useEffect(()=>{
-  socket?.on('newAssignment',(data)=>{
-    // console.log("NEW ASSIGNMENT RECEIVED", data)
-    if(data.sentTo==userData._id){
-    setAvailableAssignments([...availableAssignments,data])
-    }
-  })
-  return ()=>{
-    socket?.off('newAssignment')
-  }
-},[socket])
+// useEffect(()=>{
+//   socket?.on('newAssignment',(data)=>{
+//     // console.log("NEW ASSIGNMENT RECEIVED", data)
+//     if(data.sentTo==userData._id){
+//     setAvailableAssignments([...availableAssignments,data])
+//     }
+//   })
+//   return ()=>{
+//     socket?.off('newAssignment')
+//   }
+// },[socket])
 
   useEffect(()=>{
     getAssignments()

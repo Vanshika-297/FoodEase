@@ -278,26 +278,26 @@ export const updateOrderStatus=async(req,res)=>{
             await deliveryAssignment.populate('order')
             await deliveryAssignment.populate('shop')
 
-            const io=req.app.get("io")
-            if(io){
-                availableBoys.forEach(boy=>{
-    //                     console.log("Boy:", boy.fullName)
-    // console.log("Socket:", boy.socketId)
+    //         const io=req.app.get("io")
+    //         if(io){
+    //             availableBoys.forEach(boy=>{
+    // //                     console.log("Boy:", boy.fullName)
+    // // console.log("Socket:", boy.socketId)
 
-                    const boySocketId=boy.socketId
-                    if(boySocketId){
-                        io.to(boySocketId).emit("newAssignment",{
-                            sentTo:boy._id,
-                            assignmentId:deliveryAssignment._id,
-                            orderId:deliveryAssignment.order._id,
-                            shopName:deliveryAssignment.shop.name,
-                            deliveryAddress:deliveryAssignment.order.deliveryAddress,
-                            items:deliveryAssignment.order.shopOrders.find(so=>so._id.toString()===deliveryAssignment.shopOrderId.toString())?.shopOrderItems || [],
-                            subtotal:deliveryAssignment.order.shopOrders.find(so=>so._id.toString()===deliveryAssignment.shopOrderId.toString())?.subtotal
-                        })
-                    }
-                })
-            }
+    //                 const boySocketId=boy.socketId
+    //                 if(boySocketId){
+    //                     io.to(boySocketId).emit("newAssignment",{
+    //                         sentTo:boy._id,
+    //                         assignmentId:deliveryAssignment._id,
+    //                         orderId:deliveryAssignment.order._id,
+    //                         shopName:deliveryAssignment.shop.name,
+    //                         deliveryAddress:deliveryAssignment.order.deliveryAddress,
+    //                         items:deliveryAssignment.order.shopOrders.find(so=>so._id.toString()===deliveryAssignment.shopOrderId.toString())?.shopOrderItems || [],
+    //                         subtotal:deliveryAssignment.order.shopOrders.find(so=>so._id.toString()===deliveryAssignment.shopOrderId.toString())?.subtotal
+                        // })
+                    // }
+                // })
+            // }
         }
 
         await order.save()
